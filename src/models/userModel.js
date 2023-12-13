@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+//status ->  PENDING, ACTIVE, BLOCKED
+
 const userSchema = new mongoose.Schema({
+  user_name: {
+    type: String,
+    required: true,
+  },
   email: {
     type: String,
     unique: true,
@@ -10,6 +16,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  status: {
+    type: String,
+    default: "PENDING" 
+  },
+  email_verified: {
+    type: Boolean,
+    default: false
   },
   role: {
     type: String,

@@ -1,38 +1,37 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const commentSchema = new mongoose.Schema({
-    text: {
-        type: String,
-        required: true,
-    },
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-    }
-});
-
-const questionSchema = new mongoose.Schema({
+const questionSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: [true, 'Question must have a title'],
+      type: String,
+      required: [true, "Question must have a title"],
     },
-    content: {
-        type: String,
-        required: [true, 'Question must have content'],
+    description: {
+      type: String,
+      required: [true, "Question must have content"],
+    },
+    category: {
+      type: String,
     },
     user: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
     },
-    likes: [
-        {
-            type: mongoose.Schema.ObjectId,
-            ref: 'User',
-        }
-    ],
-    comments: [commentSchema],
-});
+    total_likes: {
+      type: Number,
+      default: 0,
+    },
+    total_comments: {
+      type: Number,
+      default: 0,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Question = mongoose.model('Question', questionSchema);
+const Question = mongoose.model("Question", questionSchema);
 
 module.exports = Question;

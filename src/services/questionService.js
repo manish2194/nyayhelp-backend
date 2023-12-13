@@ -1,40 +1,59 @@
 const Question = require("../models/questionModel");
+const Comment = require("../models/commentModel");
+const { options } = require("../routes/questionRoutes");
 
 // Create a new question
-exports.askQuestion = async (questionData) => {
+exports.askQuestion = async (user_id, questionData) => {
+  questionData.user = user_id;
   return await Question.create(questionData);
 };
 
 // Fetch all questions
 exports.getAllQuestions = async () => {
-  return Question.find().populate("user").populate("comments.user");
+  return Question.find().populate("user", (select = ["user_name"]));
 };
 
 // Fetch a specific question by its ID
 exports.getQuestion = async (questionId) => {
-  return  Question.findById(questionId)
-    .populate("user")
-    .populate("comments.user");
+  return Question.findById(questionId).populate(
+    "user",
+    (select = ["user_name"])
+  );
 };
 
 // Update a question based on its ID
 exports.updateQuestion = async (questionId, updatedData) => {
-  return  Question.findByIdAndUpdate(questionId, updatedData, {
+  return Question.findByIdAndUpdate(questionId, updatedData, {
     new: true,
   });
 };
 
 // Delete a question based on its ID
 exports.deleteQuestion = async (questionId) => {
-  return  Question.findByIdAndDelete(questionId);
+  return Question.findByIdAndDelete(questionId);
 };
 
 // Add a comment to a specific question
-exports.addComment = async (questionId, commentData) => {
+exports.addComment = async (questionId, user, commentData) => {
   const question = await Question.findById(questionId);
-  question.comments.push(commentData);
-  await question.save();
-  return question;
+  if (!question) throw new Error("Question does not exist");
+  commentData.question_id = questionId;
+  commentData.user = user._id;
+  await Comment.create(commentData);
+  await Question.updateOne(
+    { _id: questionId },
+    { $inc: { total_comments: 1 } }
+  );
+};
+
+// Add a comment to a specific question
+exports.getAllComments = async (questionId) => {
+  const question = await Question.findById(questionId);
+  if (!question) throw new Error("Question does not exist");
+  return await Comment.find({ question_id: questionId }).populate(
+    "user",
+    (select = ["user_name"])
+  );
 };
 
 // Like a specific question

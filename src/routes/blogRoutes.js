@@ -1,14 +1,21 @@
-const express = require('express');
-const blogController = require('../controllers/blogController');
-const requireAuth = require('../middleware/requireAuth');
-const adminAuth = require('../middleware/adminAuth')
+const express = require("express");
+const {
+  createBlog,
+  getAllBlogs,
+  getBlog,
+  updateBlog,
+  deleteBlog,
+} = require("../controllers/blogController");
+const { checkAuthentication } = require("../middleware/requireAuth");
+const { authenticateAdmin } = require("../middleware/adminAuth");
 
 const router = express.Router();
 
-router.post('/',requireAuth, adminAuth, blogController.createBlog);
-router.get('/', blogController.getAllBlogs);
-router.get('/:id', blogController.getBlog);
-router.patch('/:id',requireAuth, adminAuth, blogController.updateBlog);
-router.delete('/:id', requireAuth, adminAuth, blogController.deleteBlog);
+// router.post('/blog',requireAuth, adminAuth, createBlog);
+router.post("/blog", checkAuthentication(), authenticateAdmin(), createBlog);
+router.get("/blog", getAllBlogs);
+router.get("/blog/:id", getBlog);
+// router.patch('/blog/:id',requireAuth, adminAuth, updateBlog);
+// router.delete('/blog/:id', requireAuth, adminAuth, deleteBlog);
 
 module.exports = router;
