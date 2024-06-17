@@ -1,7 +1,7 @@
 const express = require("express");
 const {
   createBlog,
-  getAllBlogs,
+  getBlogs,
   getBlog,
   updateBlog,
   deleteBlog,
@@ -11,11 +11,11 @@ const { authenticateAdmin } = require("../middleware/adminAuth");
 
 const router = express.Router();
 
-// router.post('/blog',requireAuth, adminAuth, createBlog);
-router.post("/blog", checkAuthentication(), authenticateAdmin(), createBlog);
-router.get("/blog", getAllBlogs);
-router.get("/blog/:id", getBlog);
-// router.patch('/blog/:id',requireAuth, adminAuth, updateBlog);
-// router.delete('/blog/:id', requireAuth, adminAuth, deleteBlog);
+// router.post('/',requireAuth, adminAuth, createBlog);
+router.post("/", checkAuthentication(), authenticateAdmin(), createBlog);
+router.get("/", getBlogs);
+router.get("/:id", getBlog);
+// router.patch('/:id',requireAuth, adminAuth, updateBlog);
+// router.delete('/:id', requireAuth, adminAuth, deleteBlog);
 
 module.exports = router;

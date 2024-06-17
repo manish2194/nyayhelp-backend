@@ -1,19 +1,31 @@
 const Question = require("../models/questionModel");
 const questionService = require("../services/questionService");
-
+const { pageSizeCalculation } = require("../utils/index");
+const { buildResponse, buildError } = require("../utils/responseBuilder");
 exports.askQuestion = async (req, res) => {
   try {
-    const question = await questionService.askQuestion(req.user._id, req.body);
+    const question = await questionService.askQuestion(
+      req.user.user_id,
+      req.body
+    );
     res.status(201).json({ question });
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send(buildError(err));
   }
 };
 
 exports.getAllQuestions = async (req, res) => {
   try {
-    const question = await questionService.getAllQuestions();
-    res.status(201).json({ question });
+    let { page_number: reqPage = 1, page_size: reqPageSize = 10 } = req.query;
+    let paginationConfig = pageSizeCalculation(reqPage, reqPageSize);
+    const { skipCount = 0, page, page_size } = paginationConfig;
+
+    const { questions, total_count } = await questionService.getAllQuestions(
+      skipCount,
+      page_size
+    );
+    res.json(buildResponse({ questions, total_count, page, page_size }));
+    // res.status(201).json({ question });
   } catch (err) {
     res.status(400).send(err.message);
   }

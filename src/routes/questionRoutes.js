@@ -9,16 +9,12 @@ const {
 const { checkAuthentication } = require("../middleware/requireAuth");
 const router = express.Router();
 
-router.post("/question", checkAuthentication(), askQuestion);
-router.get("/question", getAllQuestions);
-router.get("/question/:id", getQuestion);
+router.post("/", checkAuthentication(), askQuestion);
+router.get("/", getAllQuestions);
+router.get("/:id", getQuestion);
 // router.patch('/:id', questionController.updateQuestion);
-router.get("/question/:id/comments", getAllComments);
-router.post(
-  "/question/:id/comments",
-  checkAuthentication(),
-  addCommentToQuestion
-);
-// router.post('/question/:id/like', questionController.likeQuestion);
+router.get("/:id/comments", getAllComments);
+router.post("/:id/comments", checkAuthentication(), addCommentToQuestion);
+// router.post('/:id/like', questionController.likeQuestion);
 
 module.exports = router;

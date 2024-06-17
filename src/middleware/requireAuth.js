@@ -13,8 +13,8 @@ const tokenExtractor = function (req, key = config.get("user_cookie")) {
   const authHeader = req.headers["authorization"];
 
   if (authHeader && authHeader.startsWith("Bearer ")) {
-    const bearerToken = authHeader.slice(7); // Remove 'Bearer ' prefix
-    return bearerToken;
+    // const bearerToken = authHeader.slice(7); // Remove 'Bearer ' prefix
+    // return bearerToken;
   }
   return null;
 };
@@ -97,22 +97,20 @@ const User = require("../models/userModel");
 
 const checkAuthentication = () => {
   return (req, res, next) => {
+    //TEST
     const token = tokenExtractor(req);
-    console.log("token", token);
+    // console.log("token", token);
 
     if (!token) {
-      return res.status(401).send("Not authorized.");
+      return res.status(401).send({ message: "Invalid token" });
     }
 
     jwt.verify(token, config.get("jwt_secret"), async (err, payload) => {
       if (err) {
-        return res.status(401).send("Not authorized.");
+        return res.status(401).send({ message: "Invalid token" });
       }
-      console.log("payload", payload);
-
-      // const user = await User.findById(payload.userId);
-
-      req.user = payload.user;
+      // console.log("payload", payload);
+      req.user = payload;
 
       next();
     });

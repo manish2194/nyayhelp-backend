@@ -9,8 +9,16 @@ exports.askQuestion = async (user_id, questionData) => {
 };
 
 // Fetch all questions
-exports.getAllQuestions = async () => {
-  return Question.find().populate("user", (select = ["user_name"]));
+exports.getAllQuestions = async (skipCount, page_size) => {
+  // return Question.find().populate("user", (select = ["user_name"]));
+  const [questions, totalItems] = await Promise.allSettled([
+    Question.find()
+      .skip(skipCount)
+      .limit(page_size)
+      .populate("user", (select = ["user_name"])),
+    Question.countDocuments(),
+  ]);
+  return { questions: questions.value, total_count: totalItems.value };
 };
 
 // Fetch a specific question by its ID
